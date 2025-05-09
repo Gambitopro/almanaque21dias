@@ -1,0 +1,192 @@
+<!DOCTYPE html><html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Almanaque 21 Días Sin Fumar</title>
+  <style>
+    html {
+      font-size: 30px;
+    }
+    @media (max-width: 600px) {
+      html {
+        font-size: 26px;
+      }
+    }
+    @media (max-width: 400px) {
+      html {
+        font-size: 22px;
+      }
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #0a0a0a;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      margin: 0;
+    }
+    h1 {
+      margin-bottom: 10px;
+      font-size: 2.5rem;
+      text-align: center;
+    }
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      margin-bottom: 20px;
+      padding: 10px;
+    }
+    .day {
+      aspect-ratio: 1 / 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      background-color: #333;
+      font-size: 1.8rem;
+      font-weight: bold;
+    }
+    .empty {
+      background-color: transparent;
+    }
+    .today {
+      border: 2px solid #00f0ff;
+      animation: blink 1s infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.2; }
+    }
+    .marked {
+      background-color: #0077cc;
+    }
+    .goal {
+      background-color: #00cc44;
+      font-weight: bold;
+      position: relative;
+    }
+    .goal::after {
+      content: "\1F389 Meta Cumplida!";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1rem;
+      color: #00cc44;
+      white-space: nowrap;
+    }
+    #countdown {
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    #phrase {
+      font-size: 1.2rem;
+      text-align: center;
+      max-width: 90%;
+      margin-top: 20px;
+      font-style: italic;
+      color: #aee2ff;
+    }
+  </style>
+</head>
+<body>
+  <h1>21 Días Sin Fumar</h1>
+  <div id="countdown"></div>
+  <div id="calendar" class="calendar"></div>
+  <div id="phrase"></div>
+  <script>
+    const startDate = new Date(2025, 4, 5);
+    const goalDate = new Date(2025, 4, 25);
+
+    const phrases = [
+      "Hoy es el primer paso hacia tu libertad.",
+      "Respirar profundo es más fácil sin humo.",
+      "Cada día sin fumar es una victoria.",
+      "Tu cuerpo ya empieza a sanar.",
+      "Hoy te elegiste a vos mismo.",
+      "Sos más fuerte que cualquier hábito.",
+      "Tu mente se aclara, tu energía crece.",
+      "Lo estás logrando. No te detengas.",
+      "Ya no sos esclavo del cigarro.",
+      "Un día más sin humo es un día ganado.",
+      "Tu salud es tu mejor inversión.",
+      "Seguís avanzando, firme y fuerte.",
+      "Te estás reconstruyendo.",
+      "El aire limpio te pertenece.",
+      "Ya casi llegás a la mitad.",
+      "Tu constancia vale oro.",
+      "Sos tu mejor versión.",
+      "Cada mañana libre es una celebración.",
+      "Estás dejando huella en vos mismo.",
+      "Tu compromiso inspira.",
+      "Lo lograste. Hoy tu voluntad venció.",
+      "Celebralo. Es solo el comienzo de tu nueva vida."
+    ];
+
+    function updateCountdown() {
+      const now = new Date();
+      const diff = goalDate - now;
+      const dayDiff = Math.floor((now - startDate) / (1000 * 60 * 60 * 24));
+
+      if (dayDiff >= 0 && dayDiff < phrases.length) {
+        document.getElementById("phrase").textContent = phrases[dayDiff];
+      } else {
+        document.getElementById("phrase").textContent = "¡Seguí así!";
+      }
+
+      if (diff > 0) {
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((diff / (1000 * 60)) % 60);
+        document.getElementById("countdown").textContent =
+          `Faltan ${days} días, ${hours}h y ${minutes}m para tu meta.`;
+      } else {
+        document.getElementById("countdown").textContent = "¡Meta alcanzada!";
+      }
+    }
+
+    setInterval(updateCountdown, 60000);
+    updateCountdown();
+
+    const calendarContainer = document.getElementById("calendar");
+    const calendarYear = 2025;
+    const calendarMonth = 4;
+    const firstDay = new Date(calendarYear, calendarMonth, 1).getDay();
+    const offset = (firstDay + 6) % 7;
+    const daysInMonth = new Date(calendarYear, calendarMonth + 1, 0).getDate();
+    const today = new Date();
+
+    for (let i = 0; i < offset; i++) {
+      const emptyCell = document.createElement("div");
+      emptyCell.classList.add("day", "empty");
+      calendarContainer.appendChild(emptyCell);
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(calendarYear, calendarMonth, day);
+      const cell = document.createElement("div");
+      cell.classList.add("day");
+      cell.textContent = day;
+
+      if (date.toDateString() === today.toDateString()) {
+        cell.classList.add("today");
+      }
+
+      const diff = Math.floor((date - startDate) / (1000 * 60 * 60 * 24));
+      if (diff >= 0 && diff < 20) {
+        cell.classList.add("marked");
+      } else if (diff === 20) {
+        cell.classList.add("goal");
+      }
+
+      calendarContainer.appendChild(cell);
+    }
+  </script>
+</body>
+</html>
